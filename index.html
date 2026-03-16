@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Checklist - 우영's 루틴</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-hover: #1f1f35;
+    --accent: #6c63ff;
+    --accent-light: #8b83ff;
+    --success: #00c897;
+    --success-dim: rgba(0,200,151,0.15);
+    --text: #e8e8f0;
+    --text-dim: #8888a8;
+    --border: #2a2a45;
+    --danger: #ff6b6b;
+    --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══ Header ═══ */
+  .app-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 20px 16px 14px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .app-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .date-display {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 960px;
+    margin: 12px auto 0;
+  }
+
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .nav-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .today-btn { width: auto; padding: 0 12px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; }
+
+  .week-strip {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .week-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 42px;
+    position: relative;
+  }
+
+  .week-day:hover { background: rgba(108,99,255,0.15); }
+  .week-day.active { background: var(--accent); box-shadow: 0 2px 12px rgba(108,99,255,0.4); }
+  .week-day.today:not(.active) { border: 1px solid var(--accent); }
+  .week-day .wd-name { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .week-day.active .wd-name { color: rgba(255,255,255,0.85); }
+  .week-day .wd-num { font-size: 0.95rem; font-weight: 700; margin-top: 1px; }
+
+  .event-dots {
+    display: flex;
+    gap: 2px;
+    margin-top: 3px;
+    height: 4px;
+  }
+
+  .event-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+  }
+
+  /* ═══ Main Layout ═══ */
+  .main-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: auto auto;
+    gap: 16px;
+  }
+
+  .progress-section { grid-column: 1 / -1; }
+
+  /* ═══ Progress ═══ */
+  .progress-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .progress-ring-wrap {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+  }
+
+  .progress-ring-wrap svg { transform: rotate(-90deg); }
+
+  .progress-ring-bg { stroke: var(--border); }
+  .progress-ring-fill {
+    stroke: var(--success);
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .progress-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--success);
+  }
+
+  .progress-info { flex: 1; }
+  .progress-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+
+  .progress-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .stat-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  .stat-val { font-weight: 700; color: var(--text); }
+
+  /* ═══ Checklist ═══ */
+  .section-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .checklist-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .checklist-item:hover { background: var(--card-hover); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .checklist-item:active { transform: scale(0.98); }
+
+  .checklist-item.checked {
+    background: var(--success-dim);
+    border-color: rgba(0,200,151,0.3);
+  }
+  .checklist-item.checked .item-title { text-decoration: line-through; color: var(--text-dim); }
+  .checklist-item.checked .item-desc { color: rgba(136,136,168,0.5); }
+
+  .color-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    transition: width 0.3s;
+  }
+
+  .checklist-item.checked .color-bar { width: 0; }
+
+  .item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .checklist-item.checked .item-icon { opacity: 0.5; filter: grayscale(0.5); }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-title { font-size: 0.92rem; font-weight: 650; margin-bottom: 1px; transition: all 0.3s; }
+  .item-desc { font-size: 0.72rem; color: var(--text-dim); transition: all 0.3s; }
+
+  .item-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .item-time-badge {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.04);
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .checklist-item.checked .checkbox {
+    background: var(--success);
+    border-color: var(--success);
+    box-shadow: 0 2px 8px rgba(0,200,151,0.3);
+  }
+
+  .check-svg { opacity: 0; transition: all 0.3s; transform: scale(0.5); }
+  .checklist-item.checked .check-svg { opacity: 1; transform: scale(1); }
+
+  /* ═══ Calendar Sidebar ═══ */
+  .sidebar {}
+
+  .cal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .cal-event {
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: rgba(22,33,62,0.8);
+    border-left: 3px solid var(--accent);
+    transition: all 0.2s;
+  }
+
+  .cal-event:last-child { margin-bottom: 0; }
+  .cal-event:hover { transform: translateX(3px); }
+  .cal-event a { color: inherit; text-decoration: none; display: block; }
+  .cal-time { font-size: 0.68rem; font-weight: 700; opacity: 0.7; }
+  .cal-title { font-size: 0.82rem; font-weight: 650; margin-top: 2px; }
+  .cal-loc { font-size: 0.68rem; color: var(--text-dim); margin-top: 2px; }
+
+  .no-events {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+
+  .no-events-icon { font-size: 1.5rem; margin-bottom: 6px; }
+
+  /* Conflict warning */
+  .conflict-banner {
+    background: rgba(255,107,107,0.1);
+    border: 1px solid rgba(255,107,107,0.3);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .conflict-banner .warn-icon { font-size: 1rem; flex-shrink: 0; }
+  .conflict-banner .warn-text { color: var(--danger); font-weight: 500; line-height: 1.4; }
+
+  /* Motivational */
+  .quote-card {
+    background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(0,200,151,0.08));
+    border: 1px solid rgba(108,99,255,0.15);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .quote-text { font-size: 0.82rem; font-style: italic; line-height: 1.5; color: var(--text-dim); }
+  .quote-author { font-size: 0.68rem; color: var(--accent-light); margin-top: 6px; font-weight: 600; }
+
+  /* Google Calendar link */
+  .gcal-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    background: rgba(108,99,255,0.08);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 10px;
+    margin-top: 12px;
+    text-decoration: none;
+    color: var(--accent-light);
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .gcal-link:hover { background: rgba(108,99,255,0.15); }
+
+  /* ═══ Animations ═══ */
+  @keyframes popIn { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes checkBounce { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+  .pop-in { animation: popIn 0.3s ease; }
+  .just-checked { animation: checkBounce 0.35s ease; }
+
+  /* ═══ Confetti overlay ═══ */
+  .confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ═══ Responsive ═══ */
+  @media (max-width: 768px) {
+    .main-content { grid-template-columns: 1fr; padding: 10px; gap: 12px; }
+    .week-day { min-width: 36px; padding: 4px 6px; }
+    .week-day .wd-num { font-size: 0.85rem; }
+    .progress-card { flex-direction: column; text-align: center; gap: 10px; }
+    .progress-stats { justify-content: center; }
+    .item-time-badge { display: none; }
+    .app-title { font-size: 1.15rem; }
+  }
+
+  @media (max-width: 400px) {
+    .week-day { min-width: 30px; padding: 3px 4px; }
+    .checklist-item { padding: 12px; gap: 10px; }
+    .item-icon { width: 36px; height: 36px; font-size: 1rem; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+<div class="app-header">
+  <div class="header-top">
+    <div class="app-title">Daily Routine</div>
+    <div class="date-display" id="dateDisplay"></div>
+  </div>
+  <div class="date-nav">
+    <button class="nav-btn" onclick="changeDate(-1)">&#8249;</button>
+    <div class="week-strip" id="weekStrip"></div>
+    <button class="nav-btn" onclick="changeDate(1)">&#8250;</button>
+    <button class="nav-btn today-btn" onclick="goToday()">TODAY</button>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="progress-section">
+    <div class="progress-card">
+      <div class="progress-ring-wrap">
+        <svg width="70" height="70">
+          <circle class="progress-ring-bg" cx="35" cy="35" r="28" fill="none" stroke-width="6"/>
+          <circle class="progress-ring-fill" id="progressRing" cx="35" cy="35" r="28" fill="none" stroke-width="6"
+                  stroke-dasharray="175.93" stroke-dashoffset="175.93" stroke-linecap="round"/>
+        </svg>
+        <div class="progress-ring-text" id="progressPct">0%</div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-title" id="progressTitle">오늘의 루틴을 시작해보세요</div>
+        <div class="progress-stats">
+          <div class="stat-item">
+            <div class="stat-icon" style="background:rgba(108,99,255,0.15)">🔥</div>
+            <span>연속 <span class="stat-val" id="streakCount">0</span>일</span>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon" style="background:rgba(0,200,151,0.15)">✅</div>
+            <span>이번 주 <span class="stat-val" id="weekDone">0</span>/7</span>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon" style="background:rgba(255,169,77,0.15)">📅</div>
+            <span>오늘 일정 <span class="stat-val" id="eventCount">0</span>개</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <div class="section-label">오늘의 체크리스트</div>
+    <div id="conflictBanner"></div>
+    <div id="checklistContainer"></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-label">Google 캘린더</div>
+    <div class="cal-card" id="calendarCard"></div>
+    <a class="gcal-link" href="https://calendar.google.com/calendar/u/0/r" target="_blank" rel="noopener">
+      📅 Google 캘린더에서 열기 →
+    </a>
+    <div style="height:12px"></div>
+    <div class="section-label">오늘의 한마디</div>
+    <div class="quote-card" id="quoteCard"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA - 구글 캘린더 실제 일정 데이터
+// ═══════════════════════════════════════
+
+// 일회성 일정
+const ONE_TIME_EVENTS = [
+  { date: '2026-03-16', title: '3층계약하기', start: '10:00', end: '13:00', color: '#6c63ff', link: 'https://www.google.com/calendar/event?eid=NzFoajBjcjY2b29qNGI5aDZncDYyYjlrNzFnbTJiOW9jcGhtNmJiMzZjc2oyYzM0YzRzbTJjMWhjNCBuYXZ5MTExcEBt&ctz=Asia/Seoul' },
+];
+
+// 반복 일정 패턴 (구글 캘린더에서 분석)
+const RECURRING_PATTERNS = [
+  // ─── 기존 일정 ───
+  {
+    title: '일식기능사',
+    days: [2, 4],
+    start: '16:00',
+    end: '21:00',
+    color: '#e599f7',
+    link: 'https://calendar.google.com/calendar/u/0/r'
+  },
+  {
+    title: '중국어 수업',
+    days: [1, 2, 3, 4, 5],
+    start: '19:20',
+    end: '19:40',
+    color: '#74c0fc',
+    link: 'https://calendar.google.com/calendar/u/0/r'
+  },
+  {
+    title: '기타레슨',
+    days: [3],
+    start: '17:00',
+    end: '18:00',
+    location: '한빛프라자',
+    color: '#ffa94d',
+    link: 'https://calendar.google.com/calendar/u/0/r'
+  },
+  {
+    title: '망고회',
+    days: [5],
+    start: '18:00',
+    end: '18:30',
+    color: '#63e6be',
+    link: 'https://calendar.google.com/calendar/u/0/r'
+  },
+  // ─── 루틴 일정 (월/수) ───
+  { title: '🎸 기타 연습', days: [1, 3], start: '13:00', end: '13:30', color: '#ffa94d', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💻 코딩 연습', days: [1, 3], start: '13:30', end: '14:30', color: '#63e6be', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🍳 요리 필기시험 공부', days: [1, 3], start: '14:30', end: '15:15', color: '#e599f7', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🇨🇳 중국어 복습', days: [1, 3], start: '15:15', end: '16:00', color: '#74c0fc', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💪 운동', days: [1, 3], start: '21:00', end: '22:00', color: '#ff6b6b', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  // ─── 루틴 일정 (화/목) - 일식기능사(16:00) 전 압축 배치 ───
+  { title: '🎸 기타 연습', days: [2, 4], start: '13:00', end: '13:30', color: '#ffa94d', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💻 코딩 연습', days: [2, 4], start: '13:30', end: '14:30', color: '#63e6be', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🍳 요리 필기시험 공부', days: [2, 4], start: '14:30', end: '15:15', color: '#e599f7', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🇨🇳 중국어 복습', days: [2, 4], start: '15:15', end: '16:00', color: '#74c0fc', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💪 운동', days: [2, 4], start: '21:00', end: '22:00', color: '#ff6b6b', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  // ─── 루틴 일정 (금요일) ───
+  { title: '🎸 기타 연습', days: [5], start: '14:00', end: '14:30', color: '#ffa94d', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💻 코딩 연습', days: [5], start: '14:30', end: '16:30', color: '#63e6be', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🍳 요리 필기시험 공부', days: [5], start: '16:30', end: '17:45', color: '#e599f7', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🇨🇳 중국어 복습', days: [5], start: '18:30', end: '19:10', color: '#74c0fc', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💪 운동', days: [5], start: '20:00', end: '21:00', color: '#ff6b6b', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  // ─── 루틴 일정 (토/일) ───
+  { title: '🎸 기타 연습', days: [6, 0], start: '14:00', end: '14:30', color: '#ffa94d', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💻 코딩 연습', days: [6, 0], start: '14:30', end: '16:30', color: '#63e6be', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🍳 요리 필기시험 공부', days: [6, 0], start: '16:30', end: '18:00', color: '#e599f7', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '🇨🇳 중국어 복습', days: [6, 0], start: '18:00', end: '18:30', color: '#74c0fc', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+  { title: '💪 운동', days: [6, 0], start: '20:00', end: '21:00', color: '#ff6b6b', isRoutine: true, link: 'https://calendar.google.com/calendar/u/0/r' },
+];
+
+// 체크리스트 항목 (요일별 시간이 다름)
+const CHECKLIST_BASE = [
+  { id: 'exercise', title: '운동', desc: '체력은 모든 것의 기본', icon: '💪', color: '#ff6b6b' },
+  { id: 'guitar',   title: '기타 연습', desc: '매일 30분 이상 연습하기', icon: '🎸', color: '#ffa94d' },
+  { id: 'coding',   title: '코딩 연습', desc: '알고리즘 / 프로젝트 작업', icon: '💻', color: '#63e6be' },
+  { id: 'cooking',  title: '요리 필기시험 공부', desc: '일식기능사 필기 대비', icon: '🍳', color: '#e599f7' },
+  { id: 'chinese',  title: '중국어 복습', desc: '수업 전 예습 & 복습', icon: '🇨🇳', color: '#74c0fc' },
+];
+
+// 요일별 시간표 (구글 캘린더 연동)
+// 월/수: 일식기능사 없음 → 오후 압축 배치
+// 화/목: 일식기능사(16~21시) 전에 집중 압축 배치
+// 금: 망고회(18~18:30) 피해서 조정
+// 토/일: 오후 여유롭게 배치
+const SCHEDULE = {
+  // 월요일(1), 수요일(3) - 오후 학습 + 저녁 운동
+  1: { guitar: '13:00 - 13:30', coding: '13:30 - 14:30', cooking: '14:30 - 15:15', chinese: '15:15 - 16:00', exercise: '21:00 - 22:00' },
+  3: { guitar: '13:00 - 13:30', coding: '13:30 - 14:30', cooking: '14:30 - 15:15', chinese: '15:15 - 16:00', exercise: '21:00 - 22:00' },
+  // 화요일(2), 목요일(4) - 일식기능사(16시) 전 압축 + 일식 후 운동
+  2: { guitar: '13:00 - 13:30', coding: '13:30 - 14:30', cooking: '14:30 - 15:15', chinese: '15:15 - 16:00', exercise: '21:00 - 22:00' },
+  4: { guitar: '13:00 - 13:30', coding: '13:30 - 14:30', cooking: '14:30 - 15:15', chinese: '15:15 - 16:00', exercise: '21:00 - 22:00' },
+  // 금요일(5) - 망고회 피해서 조정 + 저녁 운동
+  5: { guitar: '14:00 - 14:30', coding: '14:30 - 16:30', cooking: '16:30 - 17:45', chinese: '18:30 - 19:10', exercise: '20:00 - 21:00' },
+  // 토요일(6), 일요일(0) - 오후 학습 + 저녁 운동
+  6: { guitar: '14:00 - 14:30', coding: '14:30 - 16:30', cooking: '16:30 - 18:00', chinese: '18:00 - 18:30', exercise: '20:00 - 21:00' },
+  0: { guitar: '14:00 - 14:30', coding: '14:30 - 16:30', cooking: '16:30 - 18:00', chinese: '18:00 - 18:30', exercise: '20:00 - 21:00' },
+};
+
+// 선택된 날짜에 맞는 체크리스트 생성
+function getChecklist(d) {
+  const dow = d.getDay();
+  const times = SCHEDULE[dow];
+  return CHECKLIST_BASE.map(item => ({ ...item, time: times[item.id] }));
+}
+
+const QUOTES = [
+  { t: '작은 습관이 큰 변화를 만든다.', a: '제임스 클리어' },
+  { t: '오늘 할 수 있는 일을 내일로 미루지 마라.', a: '벤자민 프랭클린' },
+  { t: '꾸준함은 재능을 이긴다.', a: '' },
+  { t: '1%의 성장이 매일 모이면 1년 후 37배가 된다.', a: 'Atomic Habits' },
+  { t: '시작이 반이다.', a: '한국 속담' },
+  { t: '연습은 결코 배신하지 않는다.', a: '' },
+  { t: '매일 조금씩, 그것이 비결이다.', a: '' },
+  { t: '실패는 성공의 어머니다.', a: '' },
+  { t: '오늘의 내가 내일의 나를 만든다.', a: '' },
+  { t: '천 리 길도 한 걸음부터.', a: '노자' },
+  { t: '포기하지 않으면 실패는 없다.', a: '' },
+  { t: '할 수 있다고 믿으면 이미 반은 온 것이다.', a: '시어도어 루스벨트' },
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+
+const realToday = new Date();
+realToday.setHours(0,0,0,0);
+let currentDate = new Date(realToday);
+const stateStore = {};
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadState(d) { return stateStore[dateKey(d)] || {}; }
+function saveState(d, s) { stateStore[dateKey(d)] = s; }
+
+// ═══════════════════════════════════════
+// CALENDAR LOGIC
+// ═══════════════════════════════════════
+
+function getEventsForDate(d) {
+  const ds = dateKey(d);
+  const dow = d.getDay(); // 0=일 1=월 ...
+  const events = [];
+
+  // 일회성 일정
+  ONE_TIME_EVENTS.forEach(e => {
+    if (e.date === ds) events.push(e);
+  });
+
+  // 반복 일정
+  RECURRING_PATTERNS.forEach(p => {
+    if (p.days.includes(dow)) {
+      events.push({
+        title: p.title,
+        start: p.start,
+        end: p.end,
+        color: p.color,
+        location: p.location || null,
+        link: p.link
+      });
+    }
+  });
+
+  // 시간순 정렬
+  events.sort((a, b) => a.start.localeCompare(b.start));
+  return events;
+}
+
+// 일정과 체크리스트 시간 충돌 체크
+function getConflicts(d) {
+  const events = getEventsForDate(d);
+  const conflicts = [];
+
+  getChecklist(d).forEach(item => {
+    const [iStart] = item.time.split(' - ');
+    const iStartMin = timeToMin(iStart);
+    const iEndMin = iStartMin + 60;
+
+    events.forEach(ev => {
+      const evStart = timeToMin(ev.start);
+      const evEnd = timeToMin(ev.end);
+      if (iStartMin < evEnd && iEndMin > evStart) {
+        conflicts.push({ item: item.title, event: ev.title, eventTime: `${ev.start}-${ev.end}` });
+      }
+    });
+  });
+
+  return conflicts;
+}
+
+function timeToMin(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+
+const DAYS_KR = ['일', '월', '화', '수', '목', '금', '토'];
+
+function fullDateStr(d) {
+  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${DAYS_KR[d.getDay()]})`;
+}
+
+function renderHeader() {
+  document.getElementById('dateDisplay').textContent = fullDateStr(currentDate);
+}
+
+function renderWeek() {
+  const strip = document.getElementById('weekStrip');
+  strip.innerHTML = '';
+
+  const start = new Date(currentDate);
+  start.setDate(currentDate.getDate() - currentDate.getDay());
+
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
+    const isActive = dateKey(day) === dateKey(currentDate);
+    const isToday = dateKey(day) === dateKey(realToday);
+    const events = getEventsForDate(day);
+
+    const el = document.createElement('div');
+    el.className = `week-day${isActive ? ' active' : ''}${isToday && !isActive ? ' today' : ''}`;
+
+    let dotsHtml = '<div class="event-dots">';
+    const uniqueColors = [...new Set(events.map(e => e.color))].slice(0, 3);
+    uniqueColors.forEach(c => { dotsHtml += `<div class="event-dot" style="background:${c}"></div>`; });
+    dotsHtml += '</div>';
+
+    el.innerHTML = `<span class="wd-name">${DAYS_KR[day.getDay()]}</span><span class="wd-num">${day.getDate()}</span>${dotsHtml}`;
+    el.onclick = () => { currentDate = new Date(day); render(); };
+    strip.appendChild(el);
+  }
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklistContainer');
+  const state = loadState(currentDate);
+
+  container.innerHTML = getChecklist(currentDate).map((item, idx) => {
+    const checked = state[item.id] || false;
+    return `
+      <div class="checklist-item pop-in ${checked ? 'checked' : ''}" onclick="toggle('${item.id}')" id="ci-${item.id}" style="animation-delay:${idx * 50}ms">
+        <div class="color-bar" style="background:${item.color}"></div>
+        <div class="item-icon" style="background:${item.color}20">${item.icon}</div>
+        <div class="item-body">
+          <div class="item-title">${item.title}</div>
+          <div class="item-desc">${item.desc}</div>
+        </div>
+        <div class="item-right">
+          <span class="item-time-badge">${item.time}</span>
+          <div class="checkbox">
+            <svg class="check-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderConflicts() {
+  const banner = document.getElementById('conflictBanner');
+  const conflicts = getConflicts(currentDate);
+
+  if (conflicts.length === 0) {
+    banner.innerHTML = '';
+    return;
+  }
+
+  const msgs = conflicts.map(c => `<b>${c.item}</b> 시간이 <b>${c.event}</b>(${c.eventTime})과 겹쳐요`);
+  banner.innerHTML = `
+    <div class="conflict-banner">
+      <span class="warn-icon">⚠️</span>
+      <div class="warn-text">${msgs.join('<br>')}</div>
+    </div>`;
+}
+
+function renderCalendar() {
+  const card = document.getElementById('calendarCard');
+  const events = getEventsForDate(currentDate);
+  document.getElementById('eventCount').textContent = events.length;
+
+  if (events.length === 0) {
+    card.innerHTML = '<div class="no-events"><div class="no-events-icon">📭</div>오늘은 캘린더 일정이 없어요</div>';
+    return;
+  }
+
+  card.innerHTML = events.map(ev => `
+    <div class="cal-event" style="border-left-color:${ev.color}">
+      <a href="${ev.link}" target="_blank" rel="noopener">
+        <div class="cal-time" style="color:${ev.color}">${ev.start} - ${ev.end}</div>
+        <div class="cal-title">${ev.title}</div>
+        ${ev.location ? `<div class="cal-loc">📍 ${ev.location}</div>` : ''}
+      </a>
+    </div>`).join('');
+}
+
+function renderProgress() {
+  const state = loadState(currentDate);
+  const cl = getChecklist(currentDate);
+  const total = cl.length;
+  const done = cl.filter(i => state[i.id]).length;
+  const pct = Math.round((done / total) * 100);
+
+  // Ring animation
+  const circ = 2 * Math.PI * 28; // ~175.93
+  const offset = circ - (circ * pct / 100);
+  document.getElementById('progressRing').style.strokeDashoffset = offset;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+
+  // Title
+  const titles = ['오늘의 루틴을 시작해보세요!', '좋은 시작이에요! 계속해볼까요?', '절반 왔어요! 잘하고 있어요', '거의 다 왔어요! 조금만 더!', '대단해요! 모든 루틴 완료!'];
+  const titleIdx = done === 0 ? 0 : done < 3 ? 1 : done < 4 ? 2 : done < 5 ? 3 : 4;
+  document.getElementById('progressTitle').textContent = titles[titleIdx];
+
+  // Streak
+  let streak = 0;
+  for (let i = 1; i <= 365; i++) {
+    const d = new Date(currentDate);
+    d.setDate(currentDate.getDate() - i);
+    const s = loadState(d);
+    if (CHECKLIST_BASE.every(item => s[item.id])) streak++;
+    else break;
+  }
+  if (done === total) streak++;
+  document.getElementById('streakCount').textContent = streak;
+
+  // Week done
+  let weekDone = 0;
+  const ws = new Date(currentDate);
+  ws.setDate(currentDate.getDate() - currentDate.getDay());
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws);
+    d.setDate(ws.getDate() + i);
+    const s = loadState(d);
+    if (CHECKLIST_BASE.every(item => s[item.id])) weekDone++;
+  }
+  document.getElementById('weekDone').textContent = weekDone;
+}
+
+function renderQuote() {
+  const idx = (currentDate.getDate() + currentDate.getMonth()) % QUOTES.length;
+  const q = QUOTES[idx];
+  document.getElementById('quoteCard').innerHTML = `
+    <div class="quote-text">"${q.t}"</div>
+    ${q.a ? `<div class="quote-author">— ${q.a}</div>` : ''}`;
+}
+
+function render() {
+  renderHeader();
+  renderWeek();
+  renderChecklist();
+  renderConflicts();
+  renderCalendar();
+  renderProgress();
+  renderQuote();
+}
+
+// ═══════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════
+
+function toggle(id) {
+  const state = loadState(currentDate);
+  state[id] = !state[id];
+  saveState(currentDate, state);
+
+  const el = document.getElementById(`ci-${id}`);
+  if (state[id]) {
+    el.classList.add('just-checked');
+    setTimeout(() => el.classList.remove('just-checked'), 350);
+  }
+
+  render();
+
+  // 전부 완료 시 confetti!
+  if (CHECKLIST_BASE.every(i => state[i.id])) {
+    launchConfetti();
+  }
+}
+
+function changeDate(delta) {
+  currentDate.setDate(currentDate.getDate() + delta);
+  render();
+}
+
+function goToday() {
+  currentDate = new Date(realToday);
+  render();
+}
+
+// ═══════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#ff6b6b','#ffa94d','#63e6be','#74c0fc','#e599f7','#6c63ff','#00c897'];
+  const particles = [];
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 100,
+      w: 6 + Math.random() * 6,
+      h: 4 + Math.random() * 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: 2 + Math.random() * 3,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 10,
+      life: 1
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.rot += p.rotV;
+      p.life -= 0.008;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+
+    frame++;
+    if (alive && frame < 200) requestAnimationFrame(animate);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  animate();
+}
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(diff) > 60) {
+    changeDate(diff > 0 ? -1 : 1);
+  }
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') changeDate(-1);
+  if (e.key === 'ArrowRight') changeDate(1);
+  if (e.key === 't' || e.key === 'T') goToday();
+});
+
+// Init
+render();
+</script>
+</body>
+</html>
