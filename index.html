@@ -112,7 +112,7 @@ const CLIENT_ID='192215919522-n6146kgbueauq9ok0i2dcl5v8d1rlh77.apps.googleuserco
 const SCOPES='https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC='https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 let tokenClient,gapiInited=false,gisInited=false,isAuthed=false;
-const quotes=["연습은 결코 배신하지 않는다.","오늘 하루도 최선을 다하자.","작은 진전도 진전이다.","꾸준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믿으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
+const quotes=["연습은 결코 배신하지 않는다.","오늘 하루도 최선을 다하자.","작은 진전도 진전이다.","꿈준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믿으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
 const colorMap={'1':'lavender','2':'sage','3':'grape','4':'flamingo','5':'banana','6':'tangerine','7':'peacock','8':'graphite','9':'blueberry','10':'basil','11':'tomato'};
 
 document.addEventListener('DOMContentLoaded',()=>{setTodayDate();setRandomQuote();loadCheckState()});
@@ -123,7 +123,7 @@ function setRandomQuote(){const t=new Date(),i=(t.getFullYear()*366+t.getMonth()
 function gapiLoaded(){gapi.load('client',initGapiClient)}
 async function initGapiClient(){try{await gapi.client.init({apiKey:API_KEY,discoveryDocs:[DISCOVERY_DOC]});gapiInited=true;maybeEnableAuth()}catch(e){console.error('GAPI init error:',e)}}
 function gisLoaded(){tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:handleTokenResponse});gisInited=true;maybeEnableAuth()}
-function maybeEnableAuth(){if(gapiInited&&gisInited){document.getElementById('authSection').style.display='block';const s=localStorage.getItem('gcal_token');if(s){try{gapi.client.setToken(JSON.parse(s));isAuthed=true;onAuthed()}catch(e){localStorage.removeItem('gcal_token')}}}}
+function maybeEnableAuth(){if(gapiInited&&gisInited){const s=localStorage.getItem('gcal_token');if(s){try{gapi.client.setToken(JSON.parse(s));isAuthed=true;onAuthed()}catch(e){localStorage.removeItem('gcal_token');document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">🔗</div><p>캘린더 연결이 필요합니다.<br>아래 + 버튼으로 일정을 추가하거나<br>페이지를 새로고침해주세요.</p></div>'}}else{document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">📋</div><p>Google 캘린더 연동 대기 중...<br>잠시만 기다려주세요.</p></div>';tokenClient.requestAccessToken({prompt:'consent'})}}}
 
 function handleAuth(){if(!gisInited){alert('Google API가 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');return}if(isAuthed){const t=gapi.client.getToken();if(t)google.accounts.oauth2.revoke(t.access_token);gapi.client.setToken('');localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('authBtn').textContent='Google 캘린더 연결하기';document.getElementById('authBtn').classList.remove('signout');document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='Google 캘린더 연결 안됨';document.getElementById('progressSection').style.display='none';document.getElementById('addEventBtn').classList.remove('visible');document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">📅</div><p>Google 캘린더에 연결하면<br>오늘의 일정을 자동으로 불러옵니다</p></div>';return}tokenClient.requestAccessToken({prompt:'consent'})}
 
