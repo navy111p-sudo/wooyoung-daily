@@ -78,21 +78,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="header">
 <h1>Daily Checklist</h1>
 <div class="date" id="todayDate"></div>
-<div class="sync-status disconnected" id="syncStatus">Google 캘린더 연결 안됨</div>
+<div class="sync-status disconnected" id="syncStatus" style="display:none">Google 캘린더 연결 안됨</div>
 </div>
-<div class="auth-section" id="authSection">
+<div class="auth-section" id="authSection" style="display:none">
 <button class="auth-btn" id="authBtn" onclick="handleAuth()">Google 캘린더 연결하기</button>
 </div>
-<div class="progress-section" id="progressSection" style="display:none">
+<div class="progress-section" id="progressSection">
 <div class="progress-text"><span id="progressLabel">오늘의 진행률</span><span id="progressPercent">0%</span></div>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 </div>
 <div id="eventsContainer">
-<div class="empty-state"><div class="icon">📅</div><p>Google 캘린더에 연결하면<br>오늘의 일정을 자동으로 불러옵니다</p></div>
+<div class="spinner"></div>
 </div>
 <a class="gcal-link" href="https://calendar.google.com" target="_blank">📅 Google 캘린더에서 열기 →</a>
 <div class="quote-section"><div class="quote-label">오늘의 한마디</div><p id="dailyQuote">"연습은 결코 배신하지 않는다."</p></div>
-<button class="add-event-btn" id="addEventBtn" onclick="showAddModal()">+</button>
+<button class="add-event-btn visible" id="addEventBtn" onclick="showAddModal()">+</button>
 <div class="modal-overlay" id="modalOverlay">
 <div class="modal">
 <h3>새 일정 추가</h3>
@@ -112,7 +112,7 @@ const CLIENT_ID='192215919522-n6146kgbueauq9ok0i2dcl5v8d1rlh77.apps.googleuserco
 const SCOPES='https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC='https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 let tokenClient,gapiInited=false,gisInited=false,isAuthed=false;
-const quotes=["연습은 결코 배신하지 않는다.","오늘 한마도 최선을 다하자.","작은 진전도 진전이다.","꾸준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믊으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
+const quotes=["연습은 결코 배신하지 않는다.","오늘 하루도 최선을 다하자.","작은 진전도 진전이다.","꾸준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믿으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
 const colorMap={'1':'lavender','2':'sage','3':'grape','4':'flamingo','5':'banana','6':'tangerine','7':'peacock','8':'graphite','9':'blueberry','10':'basil','11':'tomato'};
 
 document.addEventListener('DOMContentLoaded',()=>{setTodayDate();setRandomQuote();loadCheckState()});
