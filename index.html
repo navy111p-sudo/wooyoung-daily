@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Checklist - ì°ì's ë£¨í´</title>
+<title>Daily Checklist - 우영's 루틴</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 50%,#0d1225 100%);color:#e0e0e0;min-height:100vh;padding:20px;padding-bottom:100px}
@@ -78,31 +78,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="header">
 <h1>Daily Checklist</h1>
 <div class="date" id="todayDate"></div>
-<div class="sync-status disconnected" id="syncStatus">Google ìºë¦°ë ì°ê²° ìë¨</div>
+<div class="sync-status disconnected" id="syncStatus">Google 캘린더 연결 안됨</div>
 </div>
 <div class="auth-section" id="authSection">
-<button class="auth-btn" id="authBtn" onclick="handleAuth()">Google ìºë¦°ë ì°ê²°íê¸°</button>
+<button class="auth-btn" id="authBtn" onclick="handleAuth()">Google 캘린더 연결하기</button>
 </div>
 <div class="progress-section" id="progressSection" style="display:none">
-<div class="progress-text"><span id="progressLabel">ì¤ëì ì§íë¥ </span><span id="progressPercent">0%</span></div>
+<div class="progress-text"><span id="progressLabel">오늘의 진행률</span><span id="progressPercent">0%</span></div>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 </div>
 <div id="eventsContainer">
-<div class="empty-state"><div class="icon">ð</div><p>Google ìºë¦°ëì ì°ê²°íë©´<br>ì¤ëì ì¼ì ì ìëì¼ë¡ ë¶ë¬ìµëë¤</p></div>
+<div class="empty-state"><div class="icon">📅</div><p>Google 캘린더에 연결하면<br>오늘의 일정을 자동으로 불러옵니다</p></div>
 </div>
-<a class="gcal-link" href="https://calendar.google.com" target="_blank">ð Google ìºë¦°ëìì ì´ê¸° â</a>
-<div class="quote-section"><div class="quote-label">ì¤ëì íë§ë</div><p id="dailyQuote">"ì°ìµì ê²°ì½ ë°°ì íì§ ìëë¤."</p></div>
+<a class="gcal-link" href="https://calendar.google.com" target="_blank">📅 Google 캘린더에서 열기 →</a>
+<div class="quote-section"><div class="quote-label">오늘의 한마디</div><p id="dailyQuote">"연습은 결코 배신하지 않는다."</p></div>
 <button class="add-event-btn" id="addEventBtn" onclick="showAddModal()">+</button>
 <div class="modal-overlay" id="modalOverlay">
 <div class="modal">
-<h3>ì ì¼ì  ì¶ê°</h3>
-<label>ì¼ì  ì´ë¦</label><input type="text" id="newEventTitle" placeholder="ì: ê¸°í ì°ìµ">
-<label>ìì ìê°</label><input type="time" id="newEventStart" value="09:00">
-<label>ì¢ë£ ìê°</label><input type="time" id="newEventEnd" value="10:00">
-<label>ì¤ëª (ì í)</label><input type="text" id="newEventDesc" placeholder="ë©ëª¨">
+<h3>새 일정 추가</h3>
+<label>일정 이름</label><input type="text" id="newEventTitle" placeholder="예: 기타 연습">
+<label>시작 시간</label><input type="time" id="newEventStart" value="09:00">
+<label>종료 시간</label><input type="time" id="newEventEnd" value="10:00">
+<label>설명 (선택)</label><input type="text" id="newEventDesc" placeholder="메모">
 <div class="modal-actions">
-<button class="cancel-btn" onclick="hideAddModal()">ì·¨ì</button>
-<button class="save-btn" onclick="createEvent()">Google ìºë¦°ëì ì¶ê°</button>
+<button class="cancel-btn" onclick="hideAddModal()">취소</button>
+<button class="save-btn" onclick="createEvent()">Google 캘린더에 추가</button>
 </div></div></div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
@@ -112,12 +112,12 @@ const CLIENT_ID='192215919522-n6146kgbueauq9ok0i2dcl5v8d1rlh77.apps.googleuserco
 const SCOPES='https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC='https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 let tokenClient,gapiInited=false,gisInited=false,isAuthed=false;
-const quotes=["ì°ìµì ê²°ì½ ë°°ì íì§ ìëë¤.","ì¤ë íë£¨ë ìµì ì ë¤íì.","ìì ì§ì ë ì§ì ì´ë¤.","ê¾¸ì¤í¨ì´ ì²ì¬ë¥¼ ì´ê¸´ë¤.","ììì´ ë°ì´ë¤.","í  ì ìë¤ê³  ë¯ì¼ë©´ ë°ì ì´ë£¬ ê²ì´ë¤.","ë¸ë ¥ì ë°°ì íì§ ìëë¤.","ì¤ëì ëë ì´ì ì ëë³´ë¤ ë«ë¤.","ë©ì¶ì§ ìë í, ì¼ë§ë ì²ì²í ê°ëì§ë ì¤ìíì§ ìë¤.","ëª©íë¥¼ í¥í´ í ê±¸ìì©."];
+const quotes=["연습은 결코 배신하지 않는다.","오늘 한마도 최선을 다하자.","작은 진전도 진전이다.","꾸준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믊으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
 const colorMap={'1':'lavender','2':'sage','3':'grape','4':'flamingo','5':'banana','6':'tangerine','7':'peacock','8':'graphite','9':'blueberry','10':'basil','11':'tomato'};
 
 document.addEventListener('DOMContentLoaded',()=>{setTodayDate();setRandomQuote();loadCheckState()});
 
-function setTodayDate(){const n=new Date(),d=['ì¼','ì','í','ì','ëª©','ê¸','í '];document.getElementById('todayDate').textContent=n.getFullYear()+'ë '+(n.getMonth()+1)+'ì '+n.getDate()+'ì¼ ('+d[n.getDay()]+')'}
+function setTodayDate(){const n=new Date(),d=['일','월','화','수','목','금','토'];document.getElementById('todayDate').textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일 ('+d[n.getDay()]+')'}
 function setRandomQuote(){const t=new Date(),i=(t.getFullYear()*366+t.getMonth()*31+t.getDate())%quotes.length;document.getElementById('dailyQuote').textContent='"'+quotes[i]+'"'}
 
 function gapiLoaded(){gapi.load('client',initGapiClient)}
@@ -125,25 +125,25 @@ async function initGapiClient(){try{await gapi.client.init({apiKey:API_KEY,disco
 function gisLoaded(){tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:handleTokenResponse});gisInited=true;maybeEnableAuth()}
 function maybeEnableAuth(){if(gapiInited&&gisInited){document.getElementById('authSection').style.display='block';const s=localStorage.getItem('gcal_token');if(s){try{gapi.client.setToken(JSON.parse(s));isAuthed=true;onAuthed()}catch(e){localStorage.removeItem('gcal_token')}}}}
 
-function handleAuth(){if(!gisInited){alert('Google APIê° ìì§ ë¡ëëì§ ìììµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');return}if(isAuthed){const t=gapi.client.getToken();if(t)google.accounts.oauth2.revoke(t.access_token);gapi.client.setToken('');localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('authBtn').textContent='Google ìºë¦°ë ì°ê²°íê¸°';document.getElementById('authBtn').classList.remove('signout');document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='Google ìºë¦°ë ì°ê²° ìë¨';document.getElementById('progressSection').style.display='none';document.getElementById('addEventBtn').classList.remove('visible');document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">ð</div><p>Google ìºë¦°ëì ì°ê²°íë©´<br>ì¤ëì ì¼ì ì ìëì¼ë¡ ë¶ë¬ìµëë¤</p></div>';return}tokenClient.requestAccessToken({prompt:'consent'})}
+function handleAuth(){if(!gisInited){alert('Google API가 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');return}if(isAuthed){const t=gapi.client.getToken();if(t)google.accounts.oauth2.revoke(t.access_token);gapi.client.setToken('');localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('authBtn').textContent='Google 캘린더 연결하기';document.getElementById('authBtn').classList.remove('signout');document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='Google 캘린더 연결 안됨';document.getElementById('progressSection').style.display='none';document.getElementById('addEventBtn').classList.remove('visible');document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">📅</div><p>Google 캘린더에 연결하면<br>오늘의 일정을 자동으로 불러옵니다</p></div>';return}tokenClient.requestAccessToken({prompt:'consent'})}
 
 function handleTokenResponse(r){if(r.error){console.error('Token error:',r);return}isAuthed=true;localStorage.setItem('gcal_token',JSON.stringify(gapi.client.getToken()));onAuthed()}
-function onAuthed(){document.getElementById('authBtn').textContent='ì°ê²° í´ì ';document.getElementById('authBtn').classList.add('signout');document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='â Google ìºë¦°ë ì°ëë¨';document.getElementById('progressSection').style.display='block';document.getElementById('addEventBtn').classList.add('visible');loadTodayEvents()}
+function onAuthed(){document.getElementById('authBtn').textContent='연결 해제';document.getElementById('authBtn').classList.add('signout');document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='✓ Google 캘린더 연동됨';document.getElementById('progressSection').style.display='block';document.getElementById('addEventBtn').classList.add('visible');loadTodayEvents()}
 
-async function loadTodayEvents(){const c=document.getElementById('eventsContainer');c.innerHTML='<div class="spinner"></div>';document.getElementById('syncStatus').className='sync-status loading';document.getElementById('syncStatus').textContent='ëê¸°í ì¤...';try{const t=new Date(),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),e=new Date(t.getFullYear(),t.getMonth(),t.getDate(),23,59,59);const r=await gapi.client.calendar.events.list({calendarId:'primary',timeMin:s.toISOString(),timeMax:e.toISOString(),singleEvents:true,orderBy:'startTime',timeZone:'Asia/Seoul'});renderEvents(r.result.items||[]);const n=new Date();document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='â ëê¸°í ìë£ ('+n.getHours()+':'+String(n.getMinutes()).padStart(2,'0')+')'}catch(error){console.error('Error:',error);if(error.status===401){localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='ì¸ì¦ ë§ë£ - ë¤ì ì°ê²°í´ì£¼ì¸ì';document.getElementById('authBtn').textContent='Google ìºë¦°ë ì°ê²°íê¸°';document.getElementById('authBtn').classList.remove('signout');c.innerHTML='<div class="empty-state"><div class="icon">ð</div><p>ì¸ì¦ì´ ë§ë£ëììµëë¤.<br>"Google ìºë¦°ë ì°ê²°íê¸°"ë¥¼ ëë¬ ë¤ì ì°ê²°í´ì£¼ì¸ì.</p></div>';return}c.innerHTML='<div class="empty-state"><div class="icon">â ï¸</div><p>ì¼ì ì ë¶ë¬ì¤ëë° ì¤í¨íìµëë¤.<br>ìë¡ê³ ì¹¨ í ë¤ì ìëí´ì£¼ì¸ì.</p><button class="refresh-btn" onclick="loadTodayEvents()" style="margin-top:12px">ë¤ì ìë</button></div>';document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='ëê¸°í ì¤í¨'}}
+async function loadTodayEvents(){const c=document.getElementById('eventsContainer');c.innerHTML='<div class="spinner"></div>';document.getElementById('syncStatus').className='sync-status loading';document.getElementById('syncStatus').textContent='동기화 중...';try{const t=new Date(),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),e=new Date(t.getFullYear(),t.getMonth(),t.getDate(),23,59,59);const r=await gapi.client.calendar.events.list({calendarId:'primary',timeMin:s.toISOString(),timeMax:e.toISOString(),singleEvents:true,orderBy:'startTime',timeZone:'Asia/Seoul'});renderEvents(r.result.items||[]);const n=new Date();document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='✓ 동기화 완료 ('+n.getHours()+':'+String(n.getMinutes()).padStart(2,'0')+')'}catch(error){console.error('Error:',error);if(error.status===401){localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='인증 만료 - 다시 연결해주세요';document.getElementById('authBtn').textContent='Google 캘린더 연결하기';document.getElementById('authBtn').classList.remove('signout');c.innerHTML='<div class="empty-state"><div class="icon">🔑</div><p>인증이 만료되었습니다.<br>"Google 캘린더 연결하기"를 눌러 다시 연결해주세요.</p></div>';return}c.innerHTML='<div class="empty-state"><div class="icon">⚠️</div><p>일정을 불러오는데 실패했습니다.<br>새로고침 후 다시 시도해주세요.</p><button class="refresh-btn" onclick="loadTodayEvents()" style="margin-top:12px">다시 시도</button></div>';document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='동기화 실패'}}
 
-function renderEvents(events){const c=document.getElementById('eventsContainer');if(!events.length){c.innerHTML='<div class="empty-state"><div class="icon">â¨</div><p>ì¤ë ìì ë ì¼ì ì´ ììµëë¤.<br>+ ë²í¼ì¼ë¡ ì ì¼ì ì ì¶ê°í´ë³´ì¸ì!</p></div>';return}const cs=getCheckState(),now=new Date();let html='',ni=false,total=events.length,checked=0;events.forEach((ev,i)=>{const s=new Date(ev.start.dateTime||ev.start.date),e=new Date(ev.end.dateTime||ev.end.date);if(!ni&&s>now){html+='<div class="now-indicator">íì¬ ìê° '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';ni=true}const st=fmt(s),et=fmt(e),cc=colorMap[ev.colorId]||'default',ic=cs[ev.id]||false;if(ic)checked++;html+='<div class="event-card color-'+cc+(ic?' checked':'')+'" data-event-id="'+ev.id+'" onclick="toggleCheck(\''+ev.id+'\',this)"><div class="event-time">'+st+' - '+et+'</div><div class="event-title">'+(ev.summary||'(ì ëª© ìì)')+'</div>'+(ev.description?'<div class="event-desc">'+ev.description.substring(0,60)+'</div>':'')+'<div class="checkbox"></div></div>'});if(!ni)html+='<div class="now-indicator">íì¬ ìê° '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';c.innerHTML=html;updateProgress(checked,total)}
+function renderEvents(events){const c=document.getElementById('eventsContainer');if(!events.length){c.innerHTML='<div class="empty-state"><div class="icon">✨</div><p>오늘 예정된 일정이 없습니다.<br>+ 버튼으로 새 일정을 추가해보세요!</p></div>';return}const cs=getCheckState(),now=new Date();let html='',ni=false,total=events.length,checked=0;events.forEach((ev,i)=>{const s=new Date(ev.start.dateTime||ev.start.date),e=new Date(ev.end.dateTime||ev.end.date);if(!ni&&s>now){html+='<div class="now-indicator">현재 시간 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';ni=true}const st=fmt(s),et=fmt(e),cc=colorMap[ev.colorId]||'default',ic=cs[ev.id]||false;if(ic)checked++;html+='<div class="event-card color-'+cc+(ic?' checked':'')+'" data-event-id="'+ev.id+'" onclick="toggleCheck(\''+ev.id+'\',this)"><div class="event-time">'+st+' - '+et+'</div><div class="event-title">'+(ev.summary||'(제목 없음)')+'</div>'+(ev.description?'<div class="event-desc">'+ev.description.substring(0,60)+'</div>':'')+'<div class="checkbox"></div></div>'});if(!ni)html+='<div class="now-indicator">현재 시간 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';c.innerHTML=html;updateProgress(checked,total)}
 function fmt(d){return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
 
 function toggleCheck(id,card){card.classList.toggle('checked');const s=getCheckState();s[id]=card.classList.contains('checked');saveCheckState(s);updateProgress(document.querySelectorAll('.event-card.checked').length,document.querySelectorAll('.event-card').length)}
-function updateProgress(c,t){if(!t)return;const p=Math.round(c/t*100);document.getElementById('progressPercent').textContent=p+'%';document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressLabel').textContent='ì¤ëì ì§íë¥  ('+c+'/'+t+')'}
+function updateProgress(c,t){if(!t)return;const p=Math.round(c/t*100);document.getElementById('progressPercent').textContent=p+'%';document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressLabel').textContent='오늘의 진행률 ('+c+'/'+t+')'}
 function getCheckState(){const t=new Date().toISOString().split('T')[0];try{return JSON.parse(localStorage.getItem('checklist_'+t))||{}}catch(e){return{}}}
 function saveCheckState(s){localStorage.setItem('checklist_'+new Date().toISOString().split('T')[0],JSON.stringify(s))}
 function loadCheckState(){const t=new Date();for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('checklist_')){const d=new Date(k.replace('checklist_',''));if((t-d)/(1e3*60*60*24)>7)localStorage.removeItem(k)}}}
 
 function showAddModal(){document.getElementById('modalOverlay').classList.add('active');document.getElementById('newEventTitle').focus()}
 function hideAddModal(){document.getElementById('modalOverlay').classList.remove('active')}
-async function createEvent(){const title=document.getElementById('newEventTitle').value.trim(),st=document.getElementById('newEventStart').value,et=document.getElementById('newEventEnd').value,desc=document.getElementById('newEventDesc').value.trim();if(!title){alert('ì¼ì  ì´ë¦ì ìë ¥í´ì£¼ì¸ì.');return}if(!isAuthed){const today=new Date().toISOString().split('T')[0],s=today.replace(/-/g,'')+'T'+st.replace(':','')+'00',e=today.replace(/-/g,'')+'T'+et.replace(':','')+'00';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(desc)+'&ctz=Asia/Seoul','_blank');hideAddModal();return}try{const d=new Date().toISOString().split('T')[0];await gapi.client.calendar.events.insert({calendarId:'primary',resource:{summary:title,description:desc,start:{dateTime:d+'T'+st+':00',timeZone:'Asia/Seoul'},end:{dateTime:d+'T'+et+':00',timeZone:'Asia/Seoul'}}});hideAddModal();document.getElementById('newEventTitle').value='';document.getElementById('newEventDesc').value='';loadTodayEvents()}catch(e){console.error('Error creating event:',e);alert('ì¼ì  ì¶ê°ì ì¤í¨íìµëë¤.')}}
+async function createEvent(){const title=document.getElementById('newEventTitle').value.trim(),st=document.getElementById('newEventStart').value,et=document.getElementById('newEventEnd').value,desc=document.getElementById('newEventDesc').value.trim();if(!title){alert('일정 이름을 입력해주세요.');return}if(!isAuthed){const today=new Date().toISOString().split('T')[0],s=today.replace(/-/g,'')+'T'+st.replace(':','')+'00',e=today.replace(/-/g,'')+'T'+et.replace(':','')+'00';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(desc)+'&ctz=Asia/Seoul','_blank');hideAddModal();return}try{const d=new Date().toISOString().split('T')[0];await gapi.client.calendar.events.insert({calendarId:'primary',resource:{summary:title,description:desc,start:{dateTime:d+'T'+st+':00',timeZone:'Asia/Seoul'},end:{dateTime:d+'T'+et+':00',timeZone:'Asia/Seoul'}}});hideAddModal();document.getElementById('newEventTitle').value='';document.getElementById('newEventDesc').value='';loadTodayEvents()}catch(e){console.error('Error creating event:',e);alert('일정 추가에 실패했습니다.')}}
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)hideAddModal()});
 
 window.addEventListener('load',()=>{const check=()=>{if(typeof gapi!=='undefined'&&typeof google!=='undefined'&&google.accounts){gapiLoaded();gisLoaded()}else setTimeout(check,200)};check()});
