@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Checklist - 우영's 루틴</title>
+<title>Daily Checklist - ì°ì's ë£¨í´</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 50%,#0d1225 100%);color:#e0e0e0;min-height:100vh;padding:20px;padding-bottom:100px}
@@ -69,14 +69,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .empty-state .icon{font-size:48px;margin-bottom:15px}
 .spinner{width:24px;height:24px;border:3px solid rgba(255,255,255,.1);border-top-color:#4285f4;border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
-.setup-info{background:rgba(66,133,244,.08);border:1px solid rgba(66,133,244,.2);border-radius:14px;padding:20px;margin-bottom:20px;font-size:.85rem;line-height:1.6}
-.setup-info h3{color:#4285f4;margin-bottom:10px;font-size:.95rem}
-.setup-info ol{padding-left:20px;color:#a8b2d1}
-.setup-info li{margin-bottom:8px}
-.setup-info code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:.82rem;color:#e0e0e0}
-.setup-info .api-input-group{display:flex;gap:8px;margin-top:12px}
-.setup-info input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid #333;background:rgba(255,255,255,.05);color:#fff;font-size:.85rem}
-.setup-info button{padding:8px 16px;border-radius:8px;border:none;background:#4285f4;color:#fff;cursor:pointer;font-size:.85rem}
 .now-indicator{display:flex;align-items:center;gap:10px;margin:8px 0;color:#f56565;font-size:.8rem}
 .now-indicator::before{content:'';display:block;width:8px;height:8px;background:#f56565;border-radius:50%}
 .now-indicator::after{content:'';flex:1;height:1px;background:rgba(245,101,101,.4)}
@@ -86,87 +78,75 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="header">
 <h1>Daily Checklist</h1>
 <div class="date" id="todayDate"></div>
-<div class="sync-status disconnected" id="syncStatus">Google 캘린더 연결 안됨</div>
+<div class="sync-status disconnected" id="syncStatus">Google ìºë¦°ë ì°ê²° ìë¨</div>
 </div>
 <div class="auth-section" id="authSection">
-<button class="auth-btn" id="authBtn" onclick="handleAuth()">Google 캘린더 연결하기</button>
+<button class="auth-btn" id="authBtn" onclick="handleAuth()">Google ìºë¦°ë ì°ê²°íê¸°</button>
 </div>
 <div class="progress-section" id="progressSection" style="display:none">
-<div class="progress-text"><span id="progressLabel">오늘의 진행률</span><span id="progressPercent">0%</span></div>
+<div class="progress-text"><span id="progressLabel">ì¤ëì ì§íë¥ </span><span id="progressPercent">0%</span></div>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 </div>
 <div id="eventsContainer">
-<div class="empty-state"><div class="icon">📅</div><p>Google 캘린더에 연결하면<br>오늘의 일정을 자동으로 불러옵니다</p></div>
+<div class="empty-state"><div class="icon">ð</div><p>Google ìºë¦°ëì ì°ê²°íë©´<br>ì¤ëì ì¼ì ì ìëì¼ë¡ ë¶ë¬ìµëë¤</p></div>
 </div>
-<a class="gcal-link" href="https://calendar.google.com" target="_blank">📅 Google 캘린더에서 열기 →</a>
-<div class="quote-section"><div class="quote-label">오늘의 한마디</div><p id="dailyQuote">"연습은 결코 배신하지 않는다."</p></div>
+<a class="gcal-link" href="https://calendar.google.com" target="_blank">ð Google ìºë¦°ëìì ì´ê¸° â</a>
+<div class="quote-section"><div class="quote-label">ì¤ëì íë§ë</div><p id="dailyQuote">"ì°ìµì ê²°ì½ ë°°ì íì§ ìëë¤."</p></div>
 <button class="add-event-btn" id="addEventBtn" onclick="showAddModal()">+</button>
 <div class="modal-overlay" id="modalOverlay">
 <div class="modal">
-<h3>새 일정 추가</h3>
-<label>일정 이름</label><input type="text" id="newEventTitle" placeholder="예: 기타 연습">
-<label>시작 시간</label><input type="time" id="newEventStart" value="09:00">
-<label>종료 시간</label><input type="time" id="newEventEnd" value="10:00">
-<label>설명 (선택)</label><input type="text" id="newEventDesc" placeholder="메모">
+<h3>ì ì¼ì  ì¶ê°</h3>
+<label>ì¼ì  ì´ë¦</label><input type="text" id="newEventTitle" placeholder="ì: ê¸°í ì°ìµ">
+<label>ìì ìê°</label><input type="time" id="newEventStart" value="09:00">
+<label>ì¢ë£ ìê°</label><input type="time" id="newEventEnd" value="10:00">
+<label>ì¤ëª (ì í)</label><input type="text" id="newEventDesc" placeholder="ë©ëª¨">
 <div class="modal-actions">
-<button class="cancel-btn" onclick="hideAddModal()">취소</button>
-<button class="save-btn" onclick="createEvent()">Google 캘린더에 추가</button>
+<button class="cancel-btn" onclick="hideAddModal()">ì·¨ì</button>
+<button class="save-btn" onclick="createEvent()">Google ìºë¦°ëì ì¶ê°</button>
 </div></div></div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js"></script>
 <script>
+const API_KEY='AIzaSyAQmYRbk2JZfqphaB6Zx1UXlcyjWkr-ugY';
+const CLIENT_ID='192215919522-n6146kgbueauq9ok0i2dcl5v8d1rlh77.apps.googleusercontent.com';
 const SCOPES='https://www.googleapis.com/auth/calendar';
 const DISCOVERY_DOC='https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 let tokenClient,gapiInited=false,gisInited=false,isAuthed=false;
-const quotes=["연습은 결코 배신하지 않는다.","오늘 하루도 최선을 다하자.","작은 진전도 진전이다.","꾸준함이 천재를 이긴다.","시작이 반이다.","할 수 있다고 믿으면 반은 이룬 것이다.","노력은 배신하지 않는다.","오늘의 나는 어제의 나보다 낫다.","멈추지 않는 한, 얼마나 천천히 가는지는 중요하지 않다.","목표를 향해 한 걸음씩."];
+const quotes=["ì°ìµì ê²°ì½ ë°°ì íì§ ìëë¤.","ì¤ë íë£¨ë ìµì ì ë¤íì.","ìì ì§ì ë ì§ì ì´ë¤.","ê¾¸ì¤í¨ì´ ì²ì¬ë¥¼ ì´ê¸´ë¤.","ììì´ ë°ì´ë¤.","í  ì ìë¤ê³  ë¯ì¼ë©´ ë°ì ì´ë£¬ ê²ì´ë¤.","ë¸ë ¥ì ë°°ì íì§ ìëë¤.","ì¤ëì ëë ì´ì ì ëë³´ë¤ ë«ë¤.","ë©ì¶ì§ ìë í, ì¼ë§ë ì²ì²í ê°ëì§ë ì¤ìíì§ ìë¤.","ëª©íë¥¼ í¥í´ í ê±¸ìì©."];
 const colorMap={'1':'lavender','2':'sage','3':'grape','4':'flamingo','5':'banana','6':'tangerine','7':'peacock','8':'graphite','9':'blueberry','10':'basil','11':'tomato'};
 
-document.addEventListener('DOMContentLoaded',()=>{setTodayDate();setRandomQuote();loadCheckState();if(!localStorage.getItem('gcal_client_id')||!localStorage.getItem('gcal_api_key')){showSetupInstructions()}});
+document.addEventListener('DOMContentLoaded',()=>{setTodayDate();setRandomQuote();loadCheckState()});
 
-function setTodayDate(){const n=new Date(),d=['일','월','화','수','목','금','토'];document.getElementById('todayDate').textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일 ('+d[n.getDay()]+')'}
+function setTodayDate(){const n=new Date(),d=['ì¼','ì','í','ì','ëª©','ê¸','í '];document.getElementById('todayDate').textContent=n.getFullYear()+'ë '+(n.getMonth()+1)+'ì '+n.getDate()+'ì¼ ('+d[n.getDay()]+')'}
 function setRandomQuote(){const t=new Date(),i=(t.getFullYear()*366+t.getMonth()*31+t.getDate())%quotes.length;document.getElementById('dailyQuote').textContent='"'+quotes[i]+'"'}
 
-function showSetupInstructions(){
-const c=document.getElementById('eventsContainer');
-c.innerHTML='<div class="setup-info"><h3>Google 캘린더 연동 설정</h3><ol>'
-+'<li><a href="https://console.cloud.google.com/projectcreate" target="_blank" style="color:#4285f4">Google Cloud Console</a>에서 새 프로젝트 생성</li>'
-+'<li>"API 및 서비스" → "라이브러리"에서 <strong>Google Calendar API</strong> 활성화</li>'
-+'<li>"사용자 인증 정보" → "사용자 인증 정보 만들기":<br>• <strong>API 키</strong> 생성<br>• <strong>OAuth 2.0 클라이언트 ID</strong> 생성 (웹 애플리케이션)<br>&nbsp;&nbsp;- 승인된 JavaScript 원본에 <code>'+location.origin+'</code> 추가</li>'
-+'<li>"OAuth 동의 화면" 설정 (외부, 테스트 사용자에 본인 이메일 추가)</li>'
-+'<li>아래에 API 키와 Client ID를 입력하세요:</li></ol>'
-+'<label style="color:#8892b0;font-size:.8rem;margin-top:10px;display:block">API Key</label>'
-+'<div class="api-input-group"><input type="text" id="apiKeyInput" placeholder="AIza..." value="'+(localStorage.getItem('gcal_api_key')||'')+'"></div>'
-+'<label style="color:#8892b0;font-size:.8rem;margin-top:10px;display:block">OAuth Client ID</label>'
-+'<div class="api-input-group"><input type="text" id="clientIdInput" placeholder="...apps.googleusercontent.com" value="'+(localStorage.getItem('gcal_client_id')||'')+'"><button onclick="saveApiKeys()">저장</button></div></div>';
-document.getElementById('authSection').style.display='none'}
-
-function saveApiKeys(){const a=document.getElementById('apiKeyInput').value.trim(),c=document.getElementById('clientIdInput').value.trim();if(!a||!c){alert('API Key와 Client ID를 모두 입력해주세요.');return}localStorage.setItem('gcal_api_key',a);localStorage.setItem('gcal_client_id',c);location.reload()}
 function gapiLoaded(){gapi.load('client',initGapiClient)}
-async function initGapiClient(){const k=localStorage.getItem('gcal_api_key');if(!k)return;try{await gapi.client.init({apiKey:k,discoveryDocs:[DISCOVERY_DOC]});gapiInited=true;maybeEnableAuth()}catch(e){console.error('GAPI init error:',e)}}
-function gisLoaded(){const c=localStorage.getItem('gcal_client_id');if(!c)return;tokenClient=google.accounts.oauth2.initTokenClient({client_id:c,scope:SCOPES,callback:handleTokenResponse});gisInited=true;maybeEnableAuth()}
+async function initGapiClient(){try{await gapi.client.init({apiKey:API_KEY,discoveryDocs:[DISCOVERY_DOC]});gapiInited=true;maybeEnableAuth()}catch(e){console.error('GAPI init error:',e)}}
+function gisLoaded(){tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,callback:handleTokenResponse});gisInited=true;maybeEnableAuth()}
 function maybeEnableAuth(){if(gapiInited&&gisInited){document.getElementById('authSection').style.display='block';const s=localStorage.getItem('gcal_token');if(s){try{gapi.client.setToken(JSON.parse(s));isAuthed=true;onAuthed()}catch(e){localStorage.removeItem('gcal_token')}}}}
 
-function handleAuth(){if(!gisInited){alert('Google API가 아직 로드되지 않았습니다.');return}if(isAuthed){const t=gapi.client.getToken();if(t)google.accounts.oauth2.revoke(t.access_token);gapi.client.setToken('');localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('authBtn').textContent='Google 캘린더 연결하기';document.getElementById('authBtn').classList.remove('signout');document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='Google 캘린더 연결 안됨';document.getElementById('progressSection').style.display='none';document.getElementById('addEventBtn').classList.remove('visible');showSetupInstructions();return}tokenClient.requestAccessToken({prompt:'consent'})}
+function handleAuth(){if(!gisInited){alert('Google APIê° ìì§ ë¡ëëì§ ìììµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');return}if(isAuthed){const t=gapi.client.getToken();if(t)google.accounts.oauth2.revoke(t.access_token);gapi.client.setToken('');localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('authBtn').textContent='Google ìºë¦°ë ì°ê²°íê¸°';document.getElementById('authBtn').classList.remove('signout');document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='Google ìºë¦°ë ì°ê²° ìë¨';document.getElementById('progressSection').style.display='none';document.getElementById('addEventBtn').classList.remove('visible');document.getElementById('eventsContainer').innerHTML='<div class="empty-state"><div class="icon">ð</div><p>Google ìºë¦°ëì ì°ê²°íë©´<br>ì¤ëì ì¼ì ì ìëì¼ë¡ ë¶ë¬ìµëë¤</p></div>';return}tokenClient.requestAccessToken({prompt:'consent'})}
 
 function handleTokenResponse(r){if(r.error){console.error('Token error:',r);return}isAuthed=true;localStorage.setItem('gcal_token',JSON.stringify(gapi.client.getToken()));onAuthed()}
-function onAuthed(){document.getElementById('authBtn').textContent='연결 해제';document.getElementById('authBtn').classList.add('signout');document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='✓ Google 캘린더 연동됨';document.getElementById('progressSection').style.display='block';document.getElementById('addEventBtn').classList.add('visible');loadTodayEvents()}
-async function loadTodayEvents(){const c=document.getElementById('eventsContainer');c.innerHTML='<div class="spinner"></div>';document.getElementById('syncStatus').className='sync-status loading';document.getElementById('syncStatus').textContent='동기화 중...';try{const t=new Date(),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),e=new Date(t.getFullYear(),t.getMonth(),t.getDate(),23,59,59);const r=await gapi.client.calendar.events.list({calendarId:'primary',timeMin:s.toISOString(),timeMax:e.toISOString(),singleEvents:true,orderBy:'startTime',timeZone:'Asia/Seoul'});renderEvents(r.result.items||[]);const n=new Date();document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='✓ 동기화 완료 ('+n.getHours()+':'+String(n.getMinutes()).padStart(2,'0')+')'}catch(error){console.error('Error:',error);if(error.status===401){localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='인증 만료 - 다시 연결해주세요';document.getElementById('authBtn').textContent='Google 캘린더 연결하기';document.getElementById('authBtn').classList.remove('signout');c.innerHTML='<div class="empty-state"><div class="icon">🔑</div><p>인증이 만료되었습니다.<br>"Google 캘린더 연결하기"를 눌러 다시 연결해주세요.</p></div>';return}c.innerHTML='<div class="empty-state"><div class="icon">⚠️</div><p>일정을 불러오는데 실패했습니다.<br>새로고침 후 다시 시도해주세요.</p><button class="refresh-btn" onclick="loadTodayEvents()" style="margin-top:12px">다시 시도</button></div>';document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='동기화 실패'}}
+function onAuthed(){document.getElementById('authBtn').textContent='ì°ê²° í´ì ';document.getElementById('authBtn').classList.add('signout');document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='â Google ìºë¦°ë ì°ëë¨';document.getElementById('progressSection').style.display='block';document.getElementById('addEventBtn').classList.add('visible');loadTodayEvents()}
 
-function renderEvents(events){const c=document.getElementById('eventsContainer');if(!events.length){c.innerHTML='<div class="empty-state"><div class="icon">✨</div><p>오늘 예정된 일정이 없습니다.<br>+ 버튼으로 새 일정을 추가해보세요!</p></div>';return}const cs=getCheckState(),now=new Date();let html='',ni=false,total=events.length,checked=0;events.forEach((ev,i)=>{const s=new Date(ev.start.dateTime||ev.start.date),e=new Date(ev.end.dateTime||ev.end.date);if(!ni&&s>now){html+='<div class="now-indicator">현재 시간 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';ni=true}const st=fmt(s),et=fmt(e),cc=colorMap[ev.colorId]||'default',ic=cs[ev.id]||false;if(ic)checked++;html+='<div class="event-card color-'+cc+(ic?' checked':'')+'" data-event-id="'+ev.id+'" onclick="toggleCheck(\''+ev.id+'\',this)"><div class="event-time">'+st+' - '+et+'</div><div class="event-title">'+(ev.summary||'(제목 없음)')+'</div>'+(ev.description?'<div class="event-desc">'+ev.description.substring(0,60)+'</div>':'')+'<div class="checkbox"></div></div>'});if(!ni)html+='<div class="now-indicator">현재 시간 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';c.innerHTML=html;updateProgress(checked,total)}
+async function loadTodayEvents(){const c=document.getElementById('eventsContainer');c.innerHTML='<div class="spinner"></div>';document.getElementById('syncStatus').className='sync-status loading';document.getElementById('syncStatus').textContent='ëê¸°í ì¤...';try{const t=new Date(),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),e=new Date(t.getFullYear(),t.getMonth(),t.getDate(),23,59,59);const r=await gapi.client.calendar.events.list({calendarId:'primary',timeMin:s.toISOString(),timeMax:e.toISOString(),singleEvents:true,orderBy:'startTime',timeZone:'Asia/Seoul'});renderEvents(r.result.items||[]);const n=new Date();document.getElementById('syncStatus').className='sync-status connected';document.getElementById('syncStatus').textContent='â ëê¸°í ìë£ ('+n.getHours()+':'+String(n.getMinutes()).padStart(2,'0')+')'}catch(error){console.error('Error:',error);if(error.status===401){localStorage.removeItem('gcal_token');isAuthed=false;document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='ì¸ì¦ ë§ë£ - ë¤ì ì°ê²°í´ì£¼ì¸ì';document.getElementById('authBtn').textContent='Google ìºë¦°ë ì°ê²°íê¸°';document.getElementById('authBtn').classList.remove('signout');c.innerHTML='<div class="empty-state"><div class="icon">ð</div><p>ì¸ì¦ì´ ë§ë£ëììµëë¤.<br>"Google ìºë¦°ë ì°ê²°íê¸°"ë¥¼ ëë¬ ë¤ì ì°ê²°í´ì£¼ì¸ì.</p></div>';return}c.innerHTML='<div class="empty-state"><div class="icon">â ï¸</div><p>ì¼ì ì ë¶ë¬ì¤ëë° ì¤í¨íìµëë¤.<br>ìë¡ê³ ì¹¨ í ë¤ì ìëí´ì£¼ì¸ì.</p><button class="refresh-btn" onclick="loadTodayEvents()" style="margin-top:12px">ë¤ì ìë</button></div>';document.getElementById('syncStatus').className='sync-status disconnected';document.getElementById('syncStatus').textContent='ëê¸°í ì¤í¨'}}
+
+function renderEvents(events){const c=document.getElementById('eventsContainer');if(!events.length){c.innerHTML='<div class="empty-state"><div class="icon">â¨</div><p>ì¤ë ìì ë ì¼ì ì´ ììµëë¤.<br>+ ë²í¼ì¼ë¡ ì ì¼ì ì ì¶ê°í´ë³´ì¸ì!</p></div>';return}const cs=getCheckState(),now=new Date();let html='',ni=false,total=events.length,checked=0;events.forEach((ev,i)=>{const s=new Date(ev.start.dateTime||ev.start.date),e=new Date(ev.end.dateTime||ev.end.date);if(!ni&&s>now){html+='<div class="now-indicator">íì¬ ìê° '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';ni=true}const st=fmt(s),et=fmt(e),cc=colorMap[ev.colorId]||'default',ic=cs[ev.id]||false;if(ic)checked++;html+='<div class="event-card color-'+cc+(ic?' checked':'')+'" data-event-id="'+ev.id+'" onclick="toggleCheck(\''+ev.id+'\',this)"><div class="event-time">'+st+' - '+et+'</div><div class="event-title">'+(ev.summary||'(ì ëª© ìì)')+'</div>'+(ev.description?'<div class="event-desc">'+ev.description.substring(0,60)+'</div>':'')+'<div class="checkbox"></div></div>'});if(!ni)html+='<div class="now-indicator">íì¬ ìê° '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';c.innerHTML=html;updateProgress(checked,total)}
 function fmt(d){return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
-function toggleCheck(id,card){card.classList.toggle('checked');const s=getCheckState();s[id]=card.classList.contains('checked');saveCheckState(s);const cards=document.querySelectorAll('.event-card');updateProgress(document.querySelectorAll('.event-card.checked').length,cards.length)}
-function updateProgress(c,t){if(!t)return;const p=Math.round(c/t*100);document.getElementById('progressPercent').textContent=p+'%';document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressLabel').textContent='오늘의 진행률 ('+c+'/'+t+')'}
+
+function toggleCheck(id,card){card.classList.toggle('checked');const s=getCheckState();s[id]=card.classList.contains('checked');saveCheckState(s);updateProgress(document.querySelectorAll('.event-card.checked').length,document.querySelectorAll('.event-card').length)}
+function updateProgress(c,t){if(!t)return;const p=Math.round(c/t*100);document.getElementById('progressPercent').textContent=p+'%';document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressLabel').textContent='ì¤ëì ì§íë¥  ('+c+'/'+t+')'}
 function getCheckState(){const t=new Date().toISOString().split('T')[0];try{return JSON.parse(localStorage.getItem('checklist_'+t))||{}}catch(e){return{}}}
 function saveCheckState(s){localStorage.setItem('checklist_'+new Date().toISOString().split('T')[0],JSON.stringify(s))}
 function loadCheckState(){const t=new Date();for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('checklist_')){const d=new Date(k.replace('checklist_',''));if((t-d)/(1e3*60*60*24)>7)localStorage.removeItem(k)}}}
 
 function showAddModal(){document.getElementById('modalOverlay').classList.add('active');document.getElementById('newEventTitle').focus()}
 function hideAddModal(){document.getElementById('modalOverlay').classList.remove('active')}
-
-async function createEvent(){const title=document.getElementById('newEventTitle').value.trim(),st=document.getElementById('newEventStart').value,et=document.getElementById('newEventEnd').value,desc=document.getElementById('newEventDesc').value.trim();if(!title){alert('일정 이름을 입력해주세요.');return}if(!isAuthed){const today=new Date().toISOString().split('T')[0],s=today.replace(/-/g,'')+'T'+st.replace(':','')+'00',e=today.replace(/-/g,'')+'T'+et.replace(':','')+'00';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(desc)+'&ctz=Asia/Seoul','_blank');hideAddModal();return}try{const d=new Date().toISOString().split('T')[0];await gapi.client.calendar.events.insert({calendarId:'primary',resource:{summary:title,description:desc,start:{dateTime:d+'T'+st+':00',timeZone:'Asia/Seoul'},end:{dateTime:d+'T'+et+':00',timeZone:'Asia/Seoul'}}});hideAddModal();document.getElementById('newEventTitle').value='';document.getElementById('newEventDesc').value='';loadTodayEvents()}catch(e){console.error('Error creating event:',e);alert('일정 추가에 실패했습니다.')}}
-
+async function createEvent(){const title=document.getElementById('newEventTitle').value.trim(),st=document.getElementById('newEventStart').value,et=document.getElementById('newEventEnd').value,desc=document.getElementById('newEventDesc').value.trim();if(!title){alert('ì¼ì  ì´ë¦ì ìë ¥í´ì£¼ì¸ì.');return}if(!isAuthed){const today=new Date().toISOString().split('T')[0],s=today.replace(/-/g,'')+'T'+st.replace(':','')+'00',e=today.replace(/-/g,'')+'T'+et.replace(':','')+'00';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(desc)+'&ctz=Asia/Seoul','_blank');hideAddModal();return}try{const d=new Date().toISOString().split('T')[0];await gapi.client.calendar.events.insert({calendarId:'primary',resource:{summary:title,description:desc,start:{dateTime:d+'T'+st+':00',timeZone:'Asia/Seoul'},end:{dateTime:d+'T'+et+':00',timeZone:'Asia/Seoul'}}});hideAddModal();document.getElementById('newEventTitle').value='';document.getElementById('newEventDesc').value='';loadTodayEvents()}catch(e){console.error('Error creating event:',e);alert('ì¼ì  ì¶ê°ì ì¤í¨íìµëë¤.')}}
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)hideAddModal()});
-window.addEventListener('load',()=>{const check=()=>{if(typeof gapi!=='undefined'&&typeof google!=='undefined'&&google.accounts){gapiLoaded();gisLoaded()}else setTimeout(check,200)};if(localStorage.getItem('gcal_client_id')&&localStorage.getItem('gcal_api_key'))check()});
+
+window.addEventListener('load',()=>{const check=()=>{if(typeof gapi!=='undefined'&&typeof google!=='undefined'&&google.accounts){gapiLoaded();gisLoaded()}else setTimeout(check,200)};check()});
 setInterval(()=>{if(isAuthed)loadTodayEvents()},5*60*1000);
 </script>
 </body>
